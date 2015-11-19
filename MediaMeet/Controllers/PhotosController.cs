@@ -7,127 +7,110 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MediaMeet.Models;
-using System.Configuration;
 
 namespace MediaMeet.Controllers
 {
-    public class MembersController : Controller
+    public class PhotosController : Controller
     {
-        private MediaMeetDbContext db = new MediaMeetDbContext(); //References the repository NOT the context.
+        private MediaMeetDbContext db = new MediaMeetDbContext();
 
-        // GET: Members
+        // GET: Photos
         public ActionResult Index()
         {
-            try {
-                var member = db.Member.Include(m => m.assocProfile);
-                return View(member.ToList());
-            }
-            catch
-            {
-                throw new Exception(ConfigurationManager.ConnectionStrings["MediaMeetDbContext"].ConnectionString);
-            }
-
-            
+            return View(db.Photo.ToList());
         }
 
-        // GET: Members/Details/5
+        // GET: Photos/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            Photo photo = db.Photo.Find(id);
+            if (photo == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(photo);
         }
 
-        // GET: Members/Create
+        // GET: Photos/Create
         public ActionResult Create()
         {
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction");
             return View();
         }
 
-        // POST: Members/Create
+        // POST: Photos/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,userName,memberName,dateJoined,lastLogin,ProfileID")] Member member)
+        public ActionResult Create([Bind(Include = "Id,filePath,description,dateAdded,profilePicture")] Photo photo)
         {
-
-            member.dateJoined = DateTime.Now;
-            member.lastLogin = DateTime.Now;
             if (ModelState.IsValid)
             {
-                db.Member.Add(member);
+                db.Photo.Add(photo);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction", member.Id);
-            return View(member);
+            return View(photo);
         }
 
-        // GET: Members/Edit/5
+        // GET: Photos/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            Photo photo = db.Photo.Find(id);
+            if (photo == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction", member.Id);
-            return View(member);
+            return View(photo);
         }
 
-        // POST: Members/Edit/5
+        // POST: Photos/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,userName,memberName,dateJoined,lastLogin,ProfileID")] Member member)
+        public ActionResult Edit([Bind(Include = "Id,filePath,description,dateAdded,profilePicture")] Photo photo)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(member).State = EntityState.Modified;
+                db.Entry(photo).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction", member.Id);
-            return View(member);
+            return View(photo);
         }
 
-        // GET: Members/Delete/5
+        // GET: Photos/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            Photo photo = db.Photo.Find(id);
+            if (photo == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(photo);
         }
 
-        // POST: Members/Delete/5
+        // POST: Photos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Member member = db.Member.Find(id);
-            db.Member.Remove(member);
+            Photo photo = db.Photo.Find(id);
+            db.Photo.Remove(photo);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

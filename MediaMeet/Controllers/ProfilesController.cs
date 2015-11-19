@@ -13,6 +13,7 @@ namespace MediaMeet.Controllers
     public class ProfilesController : Controller
     {
         private MediaMeetDbContext db = new MediaMeetDbContext();
+        //private UserRepository db = new UserRepository();
 
         // GET: Profiles
         public ActionResult Index()
@@ -48,7 +49,7 @@ namespace MediaMeet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,introduction,DemographicsID")] Profile profile)
+        public ActionResult Create([Bind(Include = "Id, introduction,DemographicsID")] Profile profile)
         {
             if (ModelState.IsValid)
             {

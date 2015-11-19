@@ -7,127 +7,110 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MediaMeet.Models;
-using System.Configuration;
 
 namespace MediaMeet.Controllers
 {
-    public class MembersController : Controller
+    public class FriendsController : Controller
     {
-        private MediaMeetDbContext db = new MediaMeetDbContext(); //References the repository NOT the context.
+        private MediaMeetDbContext db = new MediaMeetDbContext();
 
-        // GET: Members
+        // GET: Friends
         public ActionResult Index()
         {
-            try {
-                var member = db.Member.Include(m => m.assocProfile);
-                return View(member.ToList());
-            }
-            catch
-            {
-                throw new Exception(ConfigurationManager.ConnectionStrings["MediaMeetDbContext"].ConnectionString);
-            }
-
-            
+            return View(db.Friend.ToList());
         }
 
-        // GET: Members/Details/5
+        // GET: Friends/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            Friend friend = db.Friend.Find(id);
+            if (friend == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(friend);
         }
 
-        // GET: Members/Create
+        // GET: Friends/Create
         public ActionResult Create()
         {
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction");
             return View();
         }
 
-        // POST: Members/Create
+        // POST: Friends/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,userName,memberName,dateJoined,lastLogin,ProfileID")] Member member)
+        public ActionResult Create([Bind(Include = "Id,MemberID,dateFriended")] Friend friend)
         {
-
-            member.dateJoined = DateTime.Now;
-            member.lastLogin = DateTime.Now;
             if (ModelState.IsValid)
             {
-                db.Member.Add(member);
+                db.Friend.Add(friend);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction", member.Id);
-            return View(member);
+            return View(friend);
         }
 
-        // GET: Members/Edit/5
+        // GET: Friends/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            Friend friend = db.Friend.Find(id);
+            if (friend == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction", member.Id);
-            return View(member);
+            return View(friend);
         }
 
-        // POST: Members/Edit/5
+        // POST: Friends/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,userName,memberName,dateJoined,lastLogin,ProfileID")] Member member)
+        public ActionResult Edit([Bind(Include = "Id,MemberID,dateFriended")] Friend friend)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(member).State = EntityState.Modified;
+                db.Entry(friend).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction", member.Id);
-            return View(member);
+            return View(friend);
         }
 
-        // GET: Members/Delete/5
+        // GET: Friends/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            Friend friend = db.Friend.Find(id);
+            if (friend == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(friend);
         }
 
-        // POST: Members/Delete/5
+        // POST: Friends/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Member member = db.Member.Find(id);
-            db.Member.Remove(member);
+            Friend friend = db.Friend.Find(id);
+            db.Friend.Remove(friend);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

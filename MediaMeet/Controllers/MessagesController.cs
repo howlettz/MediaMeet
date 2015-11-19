@@ -7,127 +7,110 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MediaMeet.Models;
-using System.Configuration;
 
 namespace MediaMeet.Controllers
 {
-    public class MembersController : Controller
+    public class MessagesController : Controller
     {
-        private MediaMeetDbContext db = new MediaMeetDbContext(); //References the repository NOT the context.
+        private MediaMeetDbContext db = new MediaMeetDbContext();
 
-        // GET: Members
+        // GET: Messages
         public ActionResult Index()
         {
-            try {
-                var member = db.Member.Include(m => m.assocProfile);
-                return View(member.ToList());
-            }
-            catch
-            {
-                throw new Exception(ConfigurationManager.ConnectionStrings["MediaMeetDbContext"].ConnectionString);
-            }
-
-            
+            return View(db.Message.ToList());
         }
 
-        // GET: Members/Details/5
+        // GET: Messages/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            Message message = db.Message.Find(id);
+            if (message == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(message);
         }
 
-        // GET: Members/Create
+        // GET: Messages/Create
         public ActionResult Create()
         {
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction");
             return View();
         }
 
-        // POST: Members/Create
+        // POST: Messages/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,userName,memberName,dateJoined,lastLogin,ProfileID")] Member member)
+        public ActionResult Create([Bind(Include = "Id,recipiantID,messageText,dateSent,read,threadID")] Message message)
         {
-
-            member.dateJoined = DateTime.Now;
-            member.lastLogin = DateTime.Now;
             if (ModelState.IsValid)
             {
-                db.Member.Add(member);
+                db.Message.Add(message);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction", member.Id);
-            return View(member);
+            return View(message);
         }
 
-        // GET: Members/Edit/5
+        // GET: Messages/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            Message message = db.Message.Find(id);
+            if (message == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction", member.Id);
-            return View(member);
+            return View(message);
         }
 
-        // POST: Members/Edit/5
+        // POST: Messages/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,userName,memberName,dateJoined,lastLogin,ProfileID")] Member member)
+        public ActionResult Edit([Bind(Include = "Id,recipiantID,messageText,dateSent,read,threadID")] Message message)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(member).State = EntityState.Modified;
+                db.Entry(message).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.Id = new SelectList(db.Profile, "Id", "introduction", member.Id);
-            return View(member);
+            return View(message);
         }
 
-        // GET: Members/Delete/5
+        // GET: Messages/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            Message message = db.Message.Find(id);
+            if (message == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(message);
         }
 
-        // POST: Members/Delete/5
+        // POST: Messages/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Member member = db.Member.Find(id);
-            db.Member.Remove(member);
+            Message message = db.Message.Find(id);
+            db.Message.Remove(message);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
